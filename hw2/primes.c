@@ -20,17 +20,27 @@ int main(int argc, const char** argv){
     lowerBound = atoi(argv[1]);
     upperBound = atoi(argv[2]);
   
-    if(lowerBound < 1 || upperBound < 1){
+    if(lowerBound < 1 || upperBound < 1)
+    {
         fprintf(stderr, "ERROR: both the lowerBound (%d) and the upperBound (%d)"
 	          " must be positive.\n", lowerBound, upperBound);
         return -2;
     }
-  
-    {
-        /* TODO: fill in the code that outputs the prime numbers */
-        /*   in the range [lowerBound,upperBound] in ascending order */
-
-    }
+        int increment; // a interger to increment to check the % ==0.
+        for(lowerBound; lowerBound <= upperBound; lowerBound++)//must increment lowerBounds until it equals upperBound.
+        {
+            for(increment = 2; increment <= lowerBound; increment ++)//increasing increment intil value ==0
+            {
+                if(lowerBound % increment == 0)
+                {
+                    break; //will break indicating that it has found a value that ==0
+                }
+            }
+            if(lowerBound == increment)//if the values are the same it must be a prime number.
+            {
+                    return lowerBound;//returns the prime number. 
+            }
+        }
 
     return 0;
 }
