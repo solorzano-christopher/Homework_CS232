@@ -181,7 +181,31 @@ void greet(void)
  */
 void init(void)
 {
-    int array[] = 1; //todo 
+    int tile = (d*d) - 1;
+    
+    if(d % 2 != 0){ //if the demenions are odd. tiles will be in descending order.
+        for(int x = 0; x < d; x++){
+            for(int i = 0; x < d; i++){
+                tile -= i + x;
+                board[x][i] = tile;
+            }
+        } 
+    }
+    else{//if the demenions are even => 2 and 1 swap. 
+        for(int x = 0; x < d; x++){
+            for(int i = 0; x < d; i++){
+                tile -= i + x;
+                board[x][i] = tile;
+                if(tile == 2){
+                    board[x][i] = 1;
+                }
+                if(tile == 1){
+                    board[x][i] = 2;
+                }
+            }
+        }   
+        //todo.        
+    }
 }
 
 /**
@@ -189,9 +213,15 @@ void init(void)
  */
 void draw(void)
 {
-    int x = 0;
-    for(x;/*todo*/1;){
-        printf("\n");
+    for(int x = 0; x < d; x++){
+        for(int i =0; x < d; i++){
+            if(board[x][i] == 0){
+                printf("_");
+            }
+            else{
+                printf("%2i", board[x][i]);
+            }
+        }
     }
 }
 
@@ -204,7 +234,9 @@ short move(int tile)
     if(/*condition todo*/1){
         return 1;
     }
-    return 0;
+    else{
+        return 0;
+    }
 }
 
 /**
@@ -213,10 +245,17 @@ short move(int tile)
  */
 short won(void)
 {
-    if(/**condition todo*/1){
-        return 1;
+    int checker = 0;
+    for(int x = 0; x < d; x++){
+        for(int i = 0; i < d; i++){
+            checker ++;
+            if(board[x][i] != checker){
+                return 0;
+            }
+            else if(board[d][d] == 0){
+                break;
+            }
+        }
     }
-    else {
-        return 0;
-    }
+    return 1;
 }
