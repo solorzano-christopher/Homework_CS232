@@ -183,7 +183,7 @@ void init(void)
 {
     int tile = (d*d) - 1;
     
-    if(d % 2 != 0){ //if the demenions are odd. tiles will be in descending order.
+    if(d % 2 != 0){//if the demenions are odd. tiles will be in descending order.
         for(int x = 0; x < d; x++){
             for(int i = 0; x < d; i++){
                 tile -= i + x;
@@ -203,11 +203,9 @@ void init(void)
                     board[x][i] = 2;
                 }
             }
-        }   
-        //todo.        
+        }         
     }
 }
-
 /**
  * Prints the board in its current state.
  */
@@ -231,11 +229,23 @@ void draw(void)
  */
 short move(int tile)
 {
-    if(/*condition todo*/1){
-        return 1;
+    int zeroRow;
+    int zeroCol;
+    for(int x = 0; x < d; x++){
+        for(int i = 0; i < d; i++){
+            if(board[x][i] == 0){
+                zeroRow = x;
+                zeroCol = i;
+            }
+        }
     }
-    else{
-        return 0;
+    for(int x = 0; x < d; x++){
+        for(int i = 0; i < d; i++){
+            if(board[x][i] == tile){
+                board[x][i] = 0;
+                board[zeroRow][zeroCol] == tile;
+            }
+        }
     }
 }
 
