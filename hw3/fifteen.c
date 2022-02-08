@@ -181,29 +181,16 @@ void greet(void)
  */
 void init(void)
 {
-    int tile = (d*d) - 1;
+    int tiles = d * d;
     
-    if(d % 2 != 0){//if the demenions are odd. tiles will be in descending order.
-        for(int x = 0; x < d; x++){
-            for(int i = 0; x < d; i++){
-                tile -= i + x;
-                board[x][i] = tile;
-            }
-        } 
+    for (int x = 0; x < d; x++){
+        for (int i = 0; i < d; i++){
+            board[x][i] = --tiles;
+        }
     }
-    else{//if the demenions are even => 2 and 1 swap. 
-        for(int x = 0; x < d; x++){
-            for(int i = 0; x < d; i++){
-                tile -= i + x;
-                board[x][i] = tile;
-                if(tile == 2){
-                    board[x][i] = 1;
-                }
-                if(tile == 1){
-                    board[x][i] = 2;
-                }
-            }
-        }         
+    if(d % 2 == 0){
+       board[d-1][d-3] = 1;  
+       board[d-1][d-2] = 2;
     }
 }
 /**
@@ -211,15 +198,16 @@ void init(void)
  */
 void draw(void)
 {
-    for(int x = 0; x < d; x++){
-        for(int i =0; x < d; i++){
-            if(board[x][i] == 0){
-                printf("_");
+    for (int x = 0; x < d; x++){
+        for (int i = 0; i < d; i++){
+            if (board[x][i] == 0){
+                printf("  _");
             }
             else{
-                printf("%2i", board[x][i]);
+                printf(" %2i", board[x][i]);
             }
         }
+        printf("\n");
     }
 }
 
@@ -242,11 +230,18 @@ short move(int tile)
     for(int x = 0; x < d; x++){
         for(int i = 0; i < d; i++){
             if(board[x][i] == tile){
-                board[x][i] = 0;
-                board[zeroRow][zeroCol] == tile;
+                if(tile == board[zeroRow-1][zeroCol] ||
+                tile == board[zeroRow+1][zeroCol] ||
+                tile == board[zeroRow][zeroCol+1] ||
+                tile == board[zeroRow][zeroCol-1]){
+                    board[x][i] = 0;
+                    board[zeroRow][zeroCol] = tile;
+                    return 1;
+                }
             }
         }
     }
+    return 0;
 }
 
 /**
@@ -255,17 +250,18 @@ short move(int tile)
  */
 short won(void)
 {
-    int checker = 0;
+    int checker = 1;
     for(int x = 0; x < d; x++){
         for(int i = 0; i < d; i++){
-            checker ++;
-            if(board[x][i] != checker){
-                return 0;
+            if(board[x][i] == checker){
+                checker ++;
             }
-            else if(board[d][d] == 0){
-                break;
+            else if (checker == (d*d))
+            {
+                return 1;
             }
+            
         }
     }
-    return 1;
+    return 0;
 }
