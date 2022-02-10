@@ -181,13 +181,15 @@ void greet(void)
  */
 void init(void)
 {
-    int tiles = d * d;
+    int tiles = d * d; //total number of titles 
     
-    for (int x = 0; x < d; x++){
+    //initializing the values of the board [][]
+    for (int x = 0; x < d; x++){ 
         for (int i = 0; i < d; i++){
             board[x][i] = --tiles;
         }
     }
+    //if the dimensions is a even number => 2 and 1 swap.
     if(d % 2 == 0){
        board[d-1][d-3] = 1;  
        board[d-1][d-2] = 2;
@@ -198,8 +200,10 @@ void init(void)
  */
 void draw(void)
 {
+    //incrementing through each value of the array and printing to screen
     for (int x = 0; x < d; x++){
         for (int i = 0; i < d; i++){
+            //if the value is zero. Will print _ for user.
             if (board[x][i] == 0){
                 printf("  _");
             }
@@ -219,6 +223,7 @@ short move(int tile)
 {
     int zeroRow;
     int zeroCol;
+    //Saving the location of the zero to be switch.
     for(int x = 0; x < d; x++){
         for(int i = 0; i < d; i++){
             if(board[x][i] == 0){
@@ -229,6 +234,7 @@ short move(int tile)
     }
     for(int x = 0; x < d; x++){
         for(int i = 0; i < d; i++){
+            //Switching the user tile to zero's location if it follows the rules.
             if(board[x][i] == tile){
                 if(tile == board[zeroRow-1][zeroCol] ||
                 tile == board[zeroRow+1][zeroCol] ||
@@ -250,7 +256,9 @@ short move(int tile)
  */
 short won(void)
 {
-    int checker = 1;
+    int checker = 1; //incrementor.
+    //checker will go through each value of the title to ensure it is in 
+    //correct location. 
     for(int x = 0; x < d; x++){
         for(int i = 0; i < d; i++){
             if(board[x][i] == checker){
