@@ -47,12 +47,12 @@ int getLink(const char* srcAddr, char* link, const int maxLinkLength);
 
 int main(int argc, char** argv){
   
-  long seed;
+  long seed; // seed value 
 
-  char startAddr[MAX_ADDR_LENGTH];
-  char destAddr[MAX_ADDR_LENGTH];
+  char startAddr[MAX_ADDR_LENGTH]; //starting address
+  char destAddr[MAX_ADDR_LENGTH]; //the destination address
   
-  int hopNum, numHops;
+  int hopNum, numHops; //initializing hopping int
   
   struct listNode *pListStart; //head
 
@@ -61,7 +61,7 @@ int main(int argc, char** argv){
     return -1;
   }
   
-  /* initialization */
+  /* initialization  of the seed value*/
   if(argc >= 4){
     seed = atol(argv[3]);
   }
@@ -69,13 +69,13 @@ int main(int argc, char** argv){
     seed = time(NULL);
   }
 
-  printf("seed = %ld\n", seed);
-  srand(seed);
+  printf("seed = %ld\n", seed); //printing seed to screen
+  srand(seed); //" "
 
   strncpy(startAddr, argv[1], MAX_ADDR_LENGTH);
   startAddr[MAX_ADDR_LENGTH - 1] = '\0';
 
-  numHops = atoi(argv[2]);
+  numHops = atoi(argv[2]); //gets the number of hops 
 
   pListStart = malloc(sizeof(struct listNode)); //helping create a node
   if(pListStart == NULL){
@@ -105,9 +105,10 @@ int main(int argc, char** argv){
       strncpy(startAddr, destAddr, MAX_ADDR_LENGTH);
     }
   }
-
+  /*Third statement*/
   printAddresses(pListStart);
 
+  /*Last statement*/
   destroyList(pListStart);
 
   return 0;
@@ -119,9 +120,16 @@ int main(int argc, char** argv){
  *    and returns 0 otherwise
  */
 int contains(const struct listNode *pNode, const char *addr){
-  if(pNode == addr)
+  //creating a temporary node to be used as a checker
+  struct listNode *tempNode = pNode;
+
+  while (tempNode -> next != NULL)
   {
-    return 1;
+    if(strcmp(tempNode ->addr, addr) ==0)
+    {
+      return 1;
+    }
+    tempNode = tempNode -> next;
   }
   return 0;
 }
@@ -132,27 +140,49 @@ int contains(const struct listNode *pNode, const char *addr){
  *    the list
  */
 void insertBack(struct listNode *pNode, const char *addr){
-  struct listNode *newNode = malloc(sizeof(struct listNode));
-  strncpy(newNode -> addr, addr, strlen(addr)+1);
-  pNode -> next = newNode;
-  newNode -> next = NULL;
-
+  //creating a temporary node to be added
+  struct listNode *temp = pNode;
+  //checking to see if the current node of the list is NULL. 
+  if( temp -> next == NULL )
+  {
+    struct listNode *pListEnd = malloc(sizeof(struct listNode));
+    strncpy(pListEnd -> addr, addr , strlen(addr) +1);
+    pListEnd -> next = pListEnd; //setting the next node to the pListEnd node;
+    pListEnd -> next = NULL; //setting the next node value to NULL for future use.
+  }
+  else
+  {
+    //checking next node. Cycling through the list. To find the next NULL node.
+    insertBack(temp -> next, addr);
+  }
 }
-
 
 /*
  * prints the addresses from pNode to the end of the list,
  *   one on each line
  */
 void printAddresses(const struct listNode *pNode){
-  // TODO: complete this
+  //creating a temporary node to be printed to screen. 
+  struct listNode *tempNode = pNode; 
+  if(tempNode != NULL )
+  {
+    printf("%s\n", tempNode -> addr);
+    printAddresses(tempNode -> next);
+  }
 }
 
 /*
  * frees the memory associated with this node and all subsequent nodes
  */
 void destroyList(struct listNode *pNode){
-  // TODO: complete this
+  struct listNode *tempNode = pNode;
+  struct listNode *freeNode;
+  while( tempNode != NULL)
+  {
+    freeNode = tempNode;
+    tempNode = tempNode -> next;
+    free(freeNode);
+  }
 }
   
 
