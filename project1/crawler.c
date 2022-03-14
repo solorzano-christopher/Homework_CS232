@@ -11,7 +11,7 @@
 struct listNode{
   char addr[MAX_ADDR_LENGTH];
 
-  struct listNode *next;
+  struct listNode *next; //*link
 };
 
 /*
@@ -54,7 +54,7 @@ int main(int argc, char** argv){
   
   int hopNum, numHops;
   
-  struct listNode *pListStart;
+  struct listNode *pListStart; //head
 
   if(argc < 3 || argc > 4){
     fprintf(stderr, "USAGE: %s startAddr numHops [rand seed]", argv[0]);
@@ -77,13 +77,13 @@ int main(int argc, char** argv){
 
   numHops = atoi(argv[2]);
 
-  pListStart = malloc(sizeof(struct listNode));
+  pListStart = malloc(sizeof(struct listNode)); //helping create a node
   if(pListStart == NULL){
     fprintf(stderr, "ERROR: could not allocate memory\n");
     return -2;
   }
   strncpy(pListStart->addr, startAddr, MAX_ADDR_LENGTH);
-  pListStart->next = NULL;
+  pListStart->next = NULL; // next == NULL
 
   /* start the crawling */
   for(hopNum=1; hopNum <= numHops; hopNum++){
@@ -94,11 +94,13 @@ int main(int argc, char** argv){
       break;
     }
 
+    /*first statment */ 
     if(contains(pListStart, destAddr)){
       printf("Cycle detected on hop %d: address %s\n", hopNum, destAddr);
       hopNum--; // try again for this hop in the next iteration
     }
     else{
+      /*Second statment */ 
       insertBack(pListStart, destAddr);
       strncpy(startAddr, destAddr, MAX_ADDR_LENGTH);
     }
@@ -117,8 +119,10 @@ int main(int argc, char** argv){
  *    and returns 0 otherwise
  */
 int contains(const struct listNode *pNode, const char *addr){
-  // TODO: complete this
-
+  if(pNode == addr)
+  {
+    return 1;
+  }
   return 0;
 }
     
@@ -128,7 +132,11 @@ int contains(const struct listNode *pNode, const char *addr){
  *    the list
  */
 void insertBack(struct listNode *pNode, const char *addr){
-  // TODO: complete this
+  struct listNode *newNode = malloc(sizeof(struct listNode));
+  strncpy(newNode -> addr, addr, strlen(addr)+1);
+  pNode -> next = newNode;
+  newNode -> next = NULL;
+
 }
 
 
