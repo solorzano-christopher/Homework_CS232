@@ -94,21 +94,21 @@ int main(int argc, char** argv){
       break;
     }
 
-    /*first statment */ 
+    /*first statment todo */ 
     if(contains(pListStart, destAddr)){
       printf("Cycle detected on hop %d: address %s\n", hopNum, destAddr);
       hopNum--; // try again for this hop in the next iteration
     }
     else{
-      /*Second statment */ 
+      /*Second statment  todo */ 
       insertBack(pListStart, destAddr);
       strncpy(startAddr, destAddr, MAX_ADDR_LENGTH);
     }
   }
-  /*Third statement*/
+  /*Third statement todo*/
   printAddresses(pListStart);
 
-  /*Last statement*/
+  /*Last statement todo*/
   destroyList(pListStart);
 
   return 0;
@@ -116,44 +116,51 @@ int main(int argc, char** argv){
 
 
 /*
- * returns 1 if the list starting at pNode contains the address addr,
+ * returns 1 if the list STARTING at pNode contains the address addr,
  *    and returns 0 otherwise
  */
+//Should be working
 int contains(const struct listNode *pNode, const char *addr){
-  //creating a temporary node to be used as a checker
-  struct listNode *tempNode = pNode;
-
-  while (tempNode -> next != NULL)
+  //first you must see if the current node's addr or addr is Null
+  if(pNode -> addr == NULL || addr == NULL) 
   {
-    if(strcmp(tempNode ->addr, addr) ==0)
-    {
-      return 1;
-    }
-    tempNode = tempNode -> next;
+    return 0;
   }
-  return 0;
+  //Comparing the current node's address with the given addr.
+  if(strcmp(pNode -> addr,addr) == 0)
+  {
+    return 1; //returns 1 onces it finds the match
+  }
+  else
+  {
+  //sends the next node if it did not get a match.
+   return contains(pNode->next,addr);
+  }
 }
     
-
 /*
  * inserts the address addr as a new listNode at the end of
  *    the list
  */
+//Working
 void insertBack(struct listNode *pNode, const char *addr){
-  //creating a temporary node to be added
-  struct listNode *temp = pNode;
-  //checking to see if the current node of the list is NULL. 
-  if( temp -> next == NULL )
+  //checking to see if the next pNode is empty.
+  if(pNode->next == NULL) //if empty we can add onto it.
   {
+    //creating the next node to be added
     struct listNode *pListEnd = malloc(sizeof(struct listNode));
-    strncpy(pListEnd -> addr, addr , strlen(addr) +1);
-    pListEnd -> next = pListEnd; //setting the next node to the pListEnd node;
-    pListEnd -> next = NULL; //setting the next node value to NULL for future use.
+    //Copying the contains the of addr with the correct size.
+    strncpy(pListEnd->addr,addr,strlen(addr)+1);
+    //setting the next node to NULL for future use.
+    pListEnd ->next =NULL;
+    //adding the node to the list.
+    pNode->next = pListEnd;
   }
+  /* If the pNode.next node has contains. We will iterate until we find
+  the empty node. */
   else
   {
-    //checking next node. Cycling through the list. To find the next NULL node.
-    insertBack(temp -> next, addr);
+    insertBack(pNode->next,addr);
   }
 }
 
@@ -161,32 +168,30 @@ void insertBack(struct listNode *pNode, const char *addr){
  * prints the addresses from pNode to the end of the list,
  *   one on each line
  */
+//Working
 void printAddresses(const struct listNode *pNode){
-  //creating a temporary node to be printed to screen. 
-  struct listNode *tempNode = pNode; 
-  if(tempNode != NULL )
+  //if the current node does not equl null
+  if(pNode != NULL)
   {
-    printf("%s\n", tempNode -> addr);
-    printAddresses(tempNode -> next);
-  }
+	printf("%s\n", pNode -> addr); //printing pNode.addr to screen.
+  //Will run until it gets to the last node.
+	printAddresses(pNode -> next); //Sending the next "link" to the function.
+	}
 }
 
 /*
  * frees the memory associated with this node and all subsequent nodes
  */
+//Working!
 void destroyList(struct listNode *pNode){
-  struct listNode *tempNode = pNode;
-  struct listNode *freeNode;
-  while( tempNode != NULL)
+  //iterating through the listNode untill it reaches the Null value.
+  if(pNode !=NULL)
   {
-    freeNode = tempNode;
-    tempNode = tempNode -> next;
-    free(freeNode);
+    destroyList(pNode->next); //sends the next node to the function. 
+    free(pNode);//frees current node
   }
 }
   
-
-
 int getLink(const char* srcAddr, char* link, const int maxLinkLength){
   const int bufSize = 1000;
   char buffer[bufSize];
