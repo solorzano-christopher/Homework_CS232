@@ -22,5 +22,5 @@ indexPage function: (Group member)
 main function: (Group member)
 
 Hours spent...
-Christopher O. Solorzano: (Hours)
+Christopher O. Solorzano: (3)
 Lk Niu: (Hours)
