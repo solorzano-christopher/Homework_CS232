@@ -10,52 +10,46 @@
 
 /* TODO: structure definitions */
 
-typedef struct triNode
+struct triNode
 {
   int isLeaf; // a leaf checker, contains no children if  == 0.
   int count; //keeps track of word occurance. 
+  char letter; //letter it contains
   struct trieNode *children[26]; // up to 26. one for each letter.
-}node;
-
-node* newNode()
-{
-  node* head = (node*)malloc(sizeof(node));
-  head->isLeaf = 0;
-  head->count = 0;
-  for(int x = 0; x < 26; x++)
-  {
-    head->children[x] = NULL;
-  }
-  return head;
-}
+};
 
 /* NOTE: int return values can be used to indicate errors 
 (typically non-zero) or success (typically zero return value) */
 
 /* TODO: change this return type */
-void indexPage(const char* url);
+struct triNode indexPage(const char* url);
 int addWordOccurrence(const char* word, const int wordLength/* TODO: other parameters you need */);
-void printTrieContents(/* TODO: any parameters you need */);
-int freeTrieMemory(/* TODO: any parameters you need */);
+void printTrieContents(const struct triNode *node, char word[], int index);
+int freeTrieMemory(const struct triNode *node);
 
 //should not have to change.
 int getText(const char* srcAddr, char* buffer, const int bufSize);
 
 
 //starts
-int main(int argc, char** argv){
-  /* TODO: write the (simple) main function
-
+int main(int argc, char** argv)
+{
   /* argv[1] will be the URL to index, if argc > 1 */
-  node* head = newNode();
-
-
+  if(argc < 2)
+  {
+    fprintf(stderr, "ERROR: argc is not less than 2\n");
+    return 0;
+  }
+  //First step. Getting the triNode from indexpage().
+  struct triNode *root = indexPage(argv[1]);
 
   //Second to last step. Print the contents. 
-  printTrieContents(head);
+  int index = 0;
+  char word[100];
+  printTrieContents(root, word, index);
 
   //Last Step. Free memory.
-  freeTrieMemory(head);
+  freeTrieMemory(root);
 
   return 0;
 }
@@ -63,34 +57,62 @@ int main(int argc, char** argv){
 /* TODO: define the functions corresponding to the above prototypes */
 
 /* TODO: change this return type */
-void indexPage(const char* url)
+struct triNode indexPage(const char* url)
 {
-  //todo
+  //Get the rest from LK
+  //Just to remove error, do not use below!
+  struct triNode *root;
+  root = malloc(sizeof(struct triNode));
+  root->letter = "\0";
+  root->isLeaf = 0;
+  root->count = 0;
+  for(int x = 0; x < 26; x++)
+  {
+    root->children[x] = NULL;
+  }
+  return *root;
 }
 
 int addWordOccurrence(const char* word, const int wordLength/* TODO: other parameters you need */)
 {
-  //todo
+  //Get from LK
 }
 
-void printTrieContents(node* thisNode)
+//Prints contents starting at root.
+void printTrieContents(const struct triNode *node, char word[], int index)
 {
-  
-}
-
-int freeTrieMemory(node* thisNode)
-{
-    if(thisNode != NULL)
+  if(node->isLeaf == 0)
   {
     for (int x = 0; x < 26; x++)
     {
-      if(thisNode->children[x] != NULL)
+      if(node->children != NULL)
       {
-        freeTrieMemory(thisNode->children[x]);
+        word[index] = node->letter;
+        printTrieContents(node->children[x], word, index +1);
       }
     }
-    free(thisNode);
-    thisNode = NULL;
+  }
+  if(node->isLeaf == 1)
+  {
+    word[index] = '\0';
+    printf("%s %d\n", word, node->count);
+  }
+}
+
+//Frees the memory starting at root.
+int freeTrieMemory(const struct triNode *node)
+{
+    if(node != NULL)
+  {
+    for (int x = 0; x < 26; x++)
+    {
+      if(node->children[x] != NULL)
+      {
+        freeTrieMemory(node->children[x]);
+      }
+    }
+    free(node);
+    node = NULL;
   }
 }
 
