@@ -67,30 +67,23 @@ struct triNode *indexPage(const char *url)
   // Get text from URL
   char buffer[MAX_STR_LEN];
   char word[MAX_STR_LEN];
-  int len = getText(url, buffer, MAX_STR_LEN);
+  getText(url, buffer, MAX_STR_LEN);
 
   // Create root node
   struct triNode *root = node_create(' ');
 
-  // Print info
-  printf("%s\n", url);
-
   // If buffer is ture
-  for (int i = 0, j = 0; i < len; i++)
-    if (buffer[i] > 96 && buffer[i] < 123)
+  for (int i = 0, j = 0; i < strlen(buffer); i++)
+    if (isalpha(buffer[i]))
       word[j++] = buffer[i];
-    else if (buffer[i] > 64 && buffer[i] < 91)
-      word[j++] = buffer[i] + 32;
     else
     {
-      if (j)
+      if (!j)
       {
         word[j] = '\0';
-        // print word
-        printf("\t%s\n", word);
         addWordOccurrence(word, j, root);
-        j = 0;
-      } /* condition */
+      }
+      j = 0;
     }
 
   return root;
@@ -155,7 +148,7 @@ void printTrieContents(const struct triNode *node, char word[], int index)
     word[index] = '\0';
     printf("%s: %d\n", word, node->count);
   }
-  else if(strncpy(word, "spo",3) ==0)
+  else if(node->node_count < 1 && node->isLeaf == 0)
   {
     word[index] = '\0';
     printf("%s: %d\n", word, node->count);
@@ -176,6 +169,7 @@ void printTrieContents(const struct triNode *node, char word[], int index)
     }
   }
 }
+
 
 // Frees the memory starting at root.
 void freeTrieMemory(struct triNode *node)
@@ -209,7 +203,7 @@ int getText(const char *srcAddr, char *buffer, const int bufSize)
   buffer[bytesRead] = '\0';
 
   pclose(pipe);
-
+  
 
   return bytesRead;
 }
