@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 #define MAX_STR_LEN 300000
 #define ALPHA_LEN 26
 
@@ -15,7 +14,6 @@
 
 struct triNode
 {
-  int isLeaf;                          // a leaf checker, contains no children if  == 0.
   int count;                           // keeps track of word occurance.
   int node_count;                      // count the number of node
   char letter;                         // letter it been pointed
@@ -29,7 +27,7 @@ struct triNode
 struct triNode *indexPage(const char *url);
 struct triNode *node_create(const char c);
 int addWordOccurrence(const char *word, const int wordLength, struct triNode *root /* TODO: other parameters you need */);
-void printTrieContents(const struct triNode *node, char word[], int index);
+void printTrieContents(const struct triNode *node, char *stack, int index);
 void freeTrieMemory(struct triNode *node);
 
 // should not have to change.
@@ -46,12 +44,12 @@ int main(int argc, char **argv)
   }
   // First step. Getting the triNode from indexpage().
   // Structure pointer need to be malloc before use.
+
   struct triNode *root = indexPage(argv[1]);
 
-  // Second step. Print the contents.
-  int index = 0;
+  // Second to last step. Print the contents.
   char word[MAX_STR_LEN];
-  printTrieContents(root, word, index);
+  printTrieContents(root, word, 0);
 
   // Last Step. Free memory.
   freeTrieMemory(root);
@@ -67,23 +65,30 @@ struct triNode *indexPage(const char *url)
   // Get text from URL
   char buffer[MAX_STR_LEN];
   char word[MAX_STR_LEN];
-  getText(url, buffer, MAX_STR_LEN);
+  int len = getText(url, buffer, MAX_STR_LEN);
 
   // Create root node
   struct triNode *root = node_create(' ');
 
+  // Print info
+  printf("%s\n", url);
+
   // If buffer is ture
-  for (int i = 0, j = 0; i < strlen(buffer); i++)
-    if (isalpha(buffer[i]))
+  for (int i = 0, j = 0; i < len; i++)
+    if (buffer[i] > 96 && buffer[i] < 123)
       word[j++] = buffer[i];
+    else if (buffer[i] > 64 && buffer[i] < 91)
+      word[j++] = buffer[i] + 32;
     else
     {
-      if (!j)
+      if (j)
       {
         word[j] = '\0';
+        // print word
+        printf("\t%s\n", word);
         addWordOccurrence(word, j, root);
-      }
-      j = 0;
+        j = 0;
+      } /* condition */
     }
 
   return root;
@@ -96,7 +101,6 @@ struct triNode *node_create(const char c)
   struct triNode *root = malloc(sizeof(struct triNode));
   root->count = 0;
   root->node_count = 0;
-  root->isLeaf = 1;
   root->letter = c;
   for (int i = 0; i < ALPHA_LEN; i++)
     root->children[i] = NULL;
@@ -112,26 +116,15 @@ int addWordOccurrence(const char *word, const int wordLength, struct triNode *ro
   while (index < wordLength)
   {
     // Check if the node is contained
-    struct triNode *child;
-    int contains = 0;
-    for (int i = 0; i < pointer->node_count && !contains; i++)
+    int pos = word[index] - 'a';
+    // create a new node
+    if (pointer->children[pos] == NULL)
     {
-      struct triNode *child = pointer->children[i];
-      if (child != NULL && child->letter == word[index]) // If all node created using indexPage::node_create, children[] elements been iterated should not be NULL.
-        contains = 1;
-    }
-
-    if (!contains)
-    {
-      // create a new node
-      pointer->children[pointer->node_count] = node_create(word[index]);
+      pointer->children[pos] = node_create(word[index]);
       pointer->node_count++;
-      pointer->isLeaf = 0;
-
-      child = pointer->children[pointer->node_count];
     }
 
-    pointer = child;
+    pointer = pointer->children[pos];
     index++;
   }
 
@@ -141,35 +134,31 @@ int addWordOccurrence(const char *word, const int wordLength, struct triNode *ro
 }
 
 // Prints contents starting at root.
-void printTrieContents(const struct triNode *node, char word[], int index)
+void printTrieContents(const struct triNode *node, char *stack, const int index)
 {
-  if(node->isLeaf == 1)
+  // push
+  *(stack + index) = node->letter;
+
+  // Output if to letter
+  // char[] as stack.
+  // Manual stack operation.
+  if (node->count)
   {
-    word[index] = '\0';
-    printf("%s: %d\n", word, node->count);
+    for (int i = 1; i < index + 1; i++)
+      putchar(stack[i]);
+    printf(": %d\n", node->count);
   }
-  else if(node->node_count < 1 && node->isLeaf == 0)
-  {
-    word[index] = '\0';
-    printf("%s: %d\n", word, node->count);
-  }
-  if(node->isLeaf == 0)
+
+  if (node->node_count)
   {
     for (int i = 0; i < ALPHA_LEN; i++)
     {
-      for (int j = 0; j < node->node_count; j++)
-      {
-        if(node->children[j]->letter == 'a' + i 
-           && node->children != NULL)
-        {
-          word[index] = node->children[j]->letter;
-          printTrieContents(node->children[j], word, index + 1);
-        }
-      }
+      if (node->children[i] == NULL)
+        continue;
+      printTrieContents(node->children[i], stack, index + 1);
     }
   }
 }
-
 
 // Frees the memory starting at root.
 void freeTrieMemory(struct triNode *node)
@@ -203,7 +192,6 @@ int getText(const char *srcAddr, char *buffer, const int bufSize)
   buffer[bytesRead] = '\0';
 
   pclose(pipe);
-  
 
   return bytesRead;
 }
