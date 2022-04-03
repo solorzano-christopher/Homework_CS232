@@ -1,0 +1,18 @@
+CS 232 Introduction to C and Unix 
+Project 2: Using a Trie to Store Word Counts 
+
+Group memebers:
+
+-	Christopher O. Solorzano.
+-	Lk Niu
+
+Implemented functions... 
+freeTrieMemory function: Christopher Solorzano
+printTrieMemeory functions: Christopher Solorzano, Lk Niu
+addWordOccurrence functions: Lk Niu
+indexPage function: Lk Niu
+main function: Christopher Solorzano
+
+Hours spent...
+Christopher O. Solorzano: 22 hours
+Lk Niu: 12 hours
